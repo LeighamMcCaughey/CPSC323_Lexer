@@ -107,6 +107,48 @@ def lexer(input):
                 tokens.append((input[i:j], 'integer'))
             i = j
             continue 
+
+        return tokens
+
+    with open('input.txt', 'r') as file:
+        input = file.read()
+
+    tokens = lexer(input)
+
+    with open('output.txt', 'w') as file:
+        for token in tokens:
+            file.write(f'<{token[1]}, "{token[0]}">\n')
+
+
+        class FSM:
+            def init(self, start_state, states, transitions):
+                self.start_state = start_state
+                self.states = states 
+                self.transitions = transitions # dict: (state, input) -> next_state
+
+            def run(self, input_str):
+                state = self.start_state
+                for ch in input_str:
+                    next_state = self.transitions.get((state, ch))
+                    if next_state is None:
+                        raise ValueError(f"No transition from {state} on {ch}")
+                    state = next_state
+                return state
+
+            states = {'start', 'digit', 'letter', 'end'}
+            transitions = {
+                ('start', 'a'):'letter',
+                ('start', '1'):'digit',
+                ('start', 'a'):'letter',
+                ('start', '1'):'digit',
+                ('start', ''):'end',
+                ('start', ''):'end', 
+            }
+
+            fsm=FSM('start', states, transitions)
+            print(fsm.run(input)) # 'end'
+
+
                 
 
 
