@@ -1,7 +1,7 @@
 # import tokens
 
-operators = ['!=', '==', '<=', '>=', '<', '>', '+', '-', '*', '/']
-seperators = [')', '(', ';', ':', ',', '.', '{', '}', '@']
+operators = ['=', '!=', '==', '<=', '>=', '<', '>', '+', '-', '*', '/']
+separators = [')', '(', ';', ':', ',', '.', '{', '}', '@']
 
 # list of numbers
 digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'] 
@@ -14,35 +14,35 @@ keywords = ['integer', 'boolean', 'real', 'if', 'else', 'return', 'put', 'get', 
 
 
 
-keyword_class = {
-    'integer' : 'INT', 
-    'boolean' : 'BOOL', 
-    'real' : 'REAL', 
-    'if' : 'IF', 
-    'else' : 'ELSE', 
-    'return' : 'RETURN', 
-    'put' : 'PUT', 
-    'get' : 'GET', 
-    'while' : 'WHILE', 
-    'true' : 'TRUE', 
-    'false' : 'FALSE', 
-    'fi' : 'FI'
-}
+# keyword_class = {
+#     'integer' : 'INT', 
+#     'boolean' : 'BOOL', 
+#     'real' : 'REAL', 
+#     'if' : 'IF', 
+#     'else' : 'ELSE', 
+#     'return' : 'RETURN', 
+#     'put' : 'PUT', 
+#     'get' : 'GET', 
+#     'while' : 'WHILE', 
+#     'true' : 'TRUE', 
+#     'false' : 'FALSE', 
+#     'fi' : 'FI'
+# }
 
-def lex(input):
+def lex(text):
     tokens = []
     i = 0
 
-    while i < len(input):
+    while i < len(text):
         #point to the current character
-        char = input[i]
+        char = text[i]
 
         #comment
-        if char == '!' and input[i + 1 < len(input)] == '!':
+        if char == '!' and not (i + 1 < len(text) and text[i+1] == '='):
             j = i + 2
-            while j < len(input) and input[j] != '\n':
+            while j < len(text) and text[j] != '!':
                 j += 1
-            i = j
+            i = j + 1 #skips the closing "!"
             continue
 
         #ignoring whitespaces
@@ -51,31 +51,33 @@ def lex(input):
             continue
 
         #for operators
+        twoChar = text[i:i+2]
+         #checks for operators like != and <=
+        if twoChar in operators:
+            tokens.append((twoChar, 'operator'))
+            i += 2
+            continue
         if char in operators:
-            if i+1 < len(input) and input[i+1] == '=' and char + '=' in operators:
-                tokens.append((char + '=', 'operator'))
-                i += 2
-            else:
-                tokens.append((char, 'operator'))
-                i += 1
+            tokens.append((char, 'operator'))
+            i += 1
             continue
 
         #for seperatprs
-        if char in seperators:
-            tokens.append((char, 'seperator'))
+        if char in separators:
+            tokens.append((char, 'separator'))
             i += 1
             continue
 
         #keywords
         if char.isalpha():
             j = i + 1
-            while j < len(input) and input[j] in letters:
+            while j < len(text) and text[j] in letters:
                 j += 1
 
-            word = input[i:j]
+            word = text[i:j]
 
             if word in keywords:
-                tokens.append((word, keyword_class[word]))
+                tokens.append((word, 'keyword'))
             # identifiers
 
             # this checks if the second char is not in the 
@@ -88,23 +90,23 @@ def lex(input):
             continue
 
         #Ints and floats
-        if char.isdigit() or ((char == '+' and input[i+1].isdigit()) or (char == '-' and input[i+1].isdigit())):
+        if char.isdigit() or ((char == '+' and text[i+1].isdigit()) or (char == '-' and text[i+1].isdigit())):
             j = i + 1
 
             has_dot = False
-            while j < len(input) and (input[j].isdigit() or input[j] == '.'):
-                if input[j] == '.':
+            while j < len(text) and (text[j].isdigit() or text[j] == '.'):
+                if text[j] == '.':
                     has_dot = True
                 j += 1
 
             if has_dot:
-                if input[j-1] == '.':
+                if text[j-1] == '.':
                     tokens.clear() #maybe change so dont clear whole tokens list
                     tokens.append(('number after dot was expected', 'ERROR'))
                     return tokens
-                tokens.append((input[i:j], 'real'))
+                tokens.append((text[i:j], 'real'))
             else: 
-                tokens.append((input[i:j], 'integer'))
+                tokens.append((text[i:j], 'integer'))
             i = j
             continue 
         tokens.append((char, 'ERROR'))
@@ -118,8 +120,9 @@ with open('input.txt', 'r') as file:
 tokens = lex(input)
 
 with open('output.txt', 'w') as file:
-    for token in tokens:
-        file.write(f'<{token[1]}, "{token[0]}">\n')
+    file.write('token\tlexeme\n')
+    for token, token_type in tokens:
+        file.write(f'{token_type}\t{token}\n')
 
 
         # class FSM:
