@@ -51,3 +51,14 @@ DFSM for real {
 }
 
 """
+
+import lexer
+
+with open('input.txt', 'r') as file:
+    input = file.read()
+
+tokens = lex(input)
+
+with open('output.txt', 'w') as file:
+    for token in tokens:
+        file.write(f'<{token[1]}, "{token[0]}">\n')

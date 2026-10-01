@@ -1,4 +1,4 @@
-import tokens
+# import tokens
 
 operators = ['!=', '==', '<=', '>=', '<', '>', '+', '-', '*', '/']
 seperators = [')', '(', ';', ':', ',', '.', '{', '}', '@']
@@ -29,7 +29,7 @@ keyword_class = {
     'fi' : 'FI'
 }
 
-def lexer(input):
+def lex(input):
     tokens = []
     i = 0
 
@@ -38,7 +38,7 @@ def lexer(input):
         char = input[i]
 
         #comment
-        if char == '!' and input[i + 1] == '!':
+        if char == '!' and input[i + 1 < len(input)] == '!':
             j = i + 2
             while j < len(input) and input[j] != '\n':
                 j += 1
@@ -46,14 +46,14 @@ def lexer(input):
             continue
 
         #ignoring whitespaces
-        if char.issapce():
+        if char.isspace():
             i += 1
             continue
 
         #for operators
         if char in operators:
             if i+1 < len(input) and input[i+1] == '=' and char + '=' in operators:
-                tokens.append((char+'='), 'operator')
+                tokens.append((char + '=', 'operator'))
                 i += 2
             else:
                 tokens.append((char, 'operator'))
@@ -80,7 +80,7 @@ def lexer(input):
 
             # this checks if the second char is not in the 
             # alphabet or numbers or an underscore then error
-            elif not word[1:].alnum() or not word[1:] == '_':
+            elif not word[1:].isalnum() or not word[1:] == '_':
                 tokens.clear()
                 tokens.append(('invalid ID', 'ERROR'))
                 return tokens
@@ -107,46 +107,48 @@ def lexer(input):
                 tokens.append((input[i:j], 'integer'))
             i = j
             continue 
+        tokens.append((char, 'ERROR'))
+        i += 1
 
-        return tokens
+    return tokens
 
-    with open('input.txt', 'r') as file:
-        input = file.read()
+with open('input.txt', 'r') as file:
+    input = file.read()
 
-    tokens = lexer(input)
+tokens = lex(input)
 
-    with open('output.txt', 'w') as file:
-        for token in tokens:
-            file.write(f'<{token[1]}, "{token[0]}">\n')
+with open('output.txt', 'w') as file:
+    for token in tokens:
+        file.write(f'<{token[1]}, "{token[0]}">\n')
 
 
-        class FSM:
-            def init(self, start_state, states, transitions):
-                self.start_state = start_state
-                self.states = states 
-                self.transitions = transitions # dict: (state, input) -> next_state
+        # class FSM:
+        #     def init(self, start_state, states, transitions):
+        #         self.start_state = start_state
+        #         self.states = states 
+        #         self.transitions = transitions # dict: (state, input) -> next_state
 
-            def run(self, input_str):
-                state = self.start_state
-                for ch in input_str:
-                    next_state = self.transitions.get((state, ch))
-                    if next_state is None:
-                        raise ValueError(f"No transition from {state} on {ch}")
-                    state = next_state
-                return state
+        #     def run(self, input_str):
+        #         state = self.start_state
+        #         for ch in input_str:
+        #             next_state = self.transitions.get((state, ch))
+        #             if next_state is None:
+        #                 raise ValueError(f"No transition from {state} on {ch}")
+        #             state = next_state
+        #         return state
 
-            states = {'start', 'digit', 'letter', 'end'}
-            transitions = {
-                ('start', 'a'):'letter',
-                ('start', '1'):'digit',
-                ('start', 'a'):'letter',
-                ('start', '1'):'digit',
-                ('start', ''):'end',
-                ('start', ''):'end', 
-            }
+        #     states = {'start', 'digit', 'letter', 'end'}
+        #     transitions = {
+        #         ('start', 'a'):'letter',
+        #         ('start', '1'):'digit',
+        #         ('start', 'a'):'letter',
+        #         ('start', '1'):'digit',
+        #         ('start', ''):'end',
+        #         ('start', ''):'end', 
+        #     }
 
-            fsm=FSM('start', states, transitions)
-            print(fsm.run(input)) # 'end'
+        #     fsm=FSM('start', states, transitions)
+        #     print(fsm.run(input)) # 'end'
 
 
                 
