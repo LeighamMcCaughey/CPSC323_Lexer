@@ -125,33 +125,33 @@ with open('output.txt', 'w') as file:
         file.write(f'{token_type}\t{token}\n')
 
 
-        # class FSM:
-        #     def init(self, start_state, states, transitions):
-        #         self.start_state = start_state
-        #         self.states = states 
-        #         self.transitions = transitions # dict: (state, input) -> next_state
+        class FSM:
+            def __init__(self, start_state, states, transitions):
+                self.start_state = start_state
+                self.states = states 
+                self.transitions = transitions # dict: (state, input) -> next_state
 
-        #     def run(self, input_str):
-        #         state = self.start_state
-        #         for ch in input_str:
-        #             next_state = self.transitions.get((state, ch))
-        #             if next_state is None:
-        #                 raise ValueError(f"No transition from {state} on {ch}")
-        #             state = next_state
-        #         return state
+            def run(self, input_str):
+                state = self.start_state
+                for ch in input_str:
+                    next_state = self.transitions.get((state, ch))
+                    if next_state is None:
+                        raise ValueError(f"No transition from {state} on {ch}")
+                    state = next_state
+                return state
 
-        #     states = {'start', 'digit', 'letter', 'end'}
-        #     transitions = {
-        #         ('start', 'a'):'letter',
-        #         ('start', '1'):'digit',
-        #         ('start', 'a'):'letter',
-        #         ('start', '1'):'digit',
-        #         ('start', ''):'end',
-        #         ('start', ''):'end', 
-        #     }
+            states = {'start', 'digit', 'letter', 'end'}
+            transitions = {
+                ('start', 'a'):'letter',
+                ('start', '1'):'digit',
+                ('start', 'a'):'letter', #letter not character
+                ('start', '1'):'digit', # twice
+                ('start', ''):'end',
+                ('start', ''):'end', #not meaningful
+            }
 
-        #     fsm=FSM('start', states, transitions)
-        #     print(fsm.run(input)) # 'end'
+            fsm=FSM('start', states, transitions)
+            print(fsm.run(input)) # 'end'
 
 
                 
