@@ -1,4 +1,6 @@
-# import tokens
+
+
+#arrays of all lexeme token names
 
 operators = ['=', '!=', '==', '<=', '>=', '<', '>', '+', '-', '*', '/']
 separators = [')', '(', ';', ':', ',', '.', '{', '}', '@']
@@ -12,22 +14,12 @@ letters = [chr(i) for i in range(ord('a'), ord('z') + 1)] + [chr(i) for i in ran
 # list of keywords
 keywords = ['integer', 'boolean', 'real', 'if', 'else', 'return', 'put', 'get', 'while', 'true', 'false', 'fi']
 
-
-
-# keyword_class = {
-#     'integer' : 'INT', 
-#     'boolean' : 'BOOL', 
-#     'real' : 'REAL', 
-#     'if' : 'IF', 
-#     'else' : 'ELSE', 
-#     'return' : 'RETURN', 
-#     'put' : 'PUT', 
-#     'get' : 'GET', 
-#     'while' : 'WHILE', 
-#     'true' : 'TRUE', 
-#     'false' : 'FALSE', 
-#     'fi' : 'FI'
-# }
+#names each character
+def char_class(c):
+    if c.isdigit(): return 'digit'
+    if c.isalpha(): return 'letter'
+    if c == '.':    return 'dot'
+    return 'other'
 
 def lex(text):
     tokens = []
@@ -125,33 +117,72 @@ with open('output.txt', 'w') as file:
         file.write(f'{token_type}\t{token}\n')
 
 
-        class FSM:
-            def __init__(self, start_state, states, transitions):
-                self.start_state = start_state
-                self.states = states 
-                self.transitions = transitions # dict: (state, input) -> next_state
+class FSM:
+    def __init__(self, transitions, accepting, start='S'):
+        self.transitions = transitions  # dict: (state, char_class) -> next_state
+        self.accepting = accepting # dict: state -> token
+        self.start = start
 
-            def run(self, input_str):
-                state = self.start_state
-                for ch in input_str:
-                    next_state = self.transitions.get((state, ch))
-                    if next_state is None:
-                        raise ValueError(f"No transition from {state} on {ch}")
-                    state = next_state
-                return state
+    def run(self, input_str, i):
+        state = self.start #the starting state
+        last_accept = None # the tokken typefor the longest accepted token
+        last_end = i #the index right after last_accept
 
-            states = {'start', 'digit', 'letter', 'end'}
-            transitions = {
-                ('start', 'a'):'letter',
-                ('start', '1'):'digit',
-                ('start', 'a'):'letter', #letter not character
-                ('start', '1'):'digit', # twice
-                ('start', ''):'end',
-                ('start', ''):'end', #not meaningful
-            }
+        #these are our pointers helping us step through the code
+        j = i 
 
-            fsm=FSM('start', states, transitions)
-            print(fsm.run(input)) # 'end'
+        #while the pointer is smaller than the length of the input
+        #go to the next transtion and get that information
+        #if the next transition doesnt exist, break
+        while j < len(input_str):
+            next_transition = self.transitions.get((state, char_class(input_str[j])))
+            if next_transition is None:
+                break
+            state = next_transition
+            j += 1
+            
+            if state in self.accepting: # if state does exist,
+                #pointer goes one forward
+                #if the state is an accepting state, the whole token can be read
+                #stores 2 things: the token type, and the index
+                last_accept = self.accepting[state]
+                last_end = j
+        return last_accept, last_end #return the whole accepted token and the index where it ended
+
+#call the int and real lexer
+
+number_fsm = FSM(
+    transitions={('S','digit'):'INT', ('INT','digit'):'INT',
+                 ('INT','dot'):'DOT', ('DOT','digit'):'REAL',
+                 ('REAL','digit'):'REAL'},
+    accepting={'INT':'integer', 'REAL':'real'},
+)
+
+#call the identifier lexer
+identifier_fsm = FSM(
+    transitions={('S','letter'):'ID', ('ID','letter'):'ID', ('ID','digit'):'ID'},
+    accepting={'ID':'identifier'},
+)
+
+    #     for ch in input_str:
+    #         next_state = self.transitions.get((state, ch))
+    #         if next_state is None:
+    #             raise ValueError(f"No transition from {state} on {ch}")
+    #         state = next_state
+    #     return state
+
+    # states = {'start', 'digit', 'letter', 'end'}
+    # transitions = {
+    #     ('start', 'a'):'letter',
+    #     ('start', '1'):'digit',
+    #     ('start', 'a'):'letter', #letter not character
+    #     ('start', '1'):'digit', # twice
+    #     ('start', ''):'end',
+    #     ('start', ''):'end', #not meaningful
+    # }
+
+    # fsm=FSM('start', states, transitions)
+    # print(fsm.run(input)) # 'end'
 
 
                 
