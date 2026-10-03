@@ -1,0 +1,24 @@
+!test case 3 - trying to use all separators, identifiers, and keywords!
+!and also testing error cases/unknowns!
+
+yippee = false
+
+function extra_long_test (yippee boolean):
+{
+    real num = 1.0
+    _number = num
+    0variable = num
+
+    if (yippee == true, number < 1):
+        return 0
+    else (yippee != true, number >= 1)
+        return 1
+
+    @
+    #problemAdded
+    @
+
+    fee fi fo fum
+
+    some other code!#evilcomment! here 
+}
