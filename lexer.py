@@ -124,13 +124,13 @@ with open(test_input, 'r') as file:
 #tokens = lex(input_text)
 i = 0
 with open(test_output, 'w') as output:
-    output.write('token\tlexeme\n')
-    output.write('------------------------------')
+    output.write(f'{"token":<15}lexeme\n')
+    output.write('-' * 25 + '\n')
     while True:
         token_type, lexeme, i = lex(input_text, i)
         if token_type is None:
             break
-        output.write(f'{token_type}\t{lexeme}\n')
+        output.write(f'{token_type:<12}\t{lexeme}\n')
 
 
                 
