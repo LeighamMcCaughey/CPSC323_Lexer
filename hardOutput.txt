@@ -5,9 +5,9 @@ operator    	=
 keyword     	false
 keyword     	function
 identifier  	extra
-ERROR       	_
+unknown     	_
 identifier  	long
-ERROR       	_
+unknown     	_
 identifier  	test
 separator   	(
 identifier  	yippee
@@ -19,7 +19,7 @@ keyword     	real
 identifier  	num
 operator    	=
 real        	1.0
-ERROR       	_
+unknown     	_
 identifier  	number
 operator    	=
 identifier  	num
@@ -53,7 +53,7 @@ separator   	)
 keyword     	return
 integer     	1
 separator   	@
-ERROR       	#
+unknown     	#
 identifier  	problemAdded
 separator   	@
 identifier  	fee
