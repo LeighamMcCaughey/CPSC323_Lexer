@@ -1,5 +1,3 @@
-
-
 #arrays of all lexeme token names
 
 operators = ['=', '!=', '==', '<=', '>=', '<', '>', '+', '-', '*', '/']
@@ -123,6 +121,7 @@ with open('input.txt', 'r') as file:
 i = 0
 with open('output.txt', 'w') as output:
     output.write('token\tlexeme\n')
+    output.write('------------------------------')
     while True:
         token_type, lexeme, i = lex(input_text, i)
         if token_type is None:
