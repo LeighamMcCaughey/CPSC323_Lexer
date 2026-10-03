@@ -1,7 +1,7 @@
 # test file input & output storage variables
 
 # test_input = 'easyInput.txt'
-test_input = 'mediumInput.txt'
+test_input = 'hardInput.txt'
 # test_input = 'hardInput.txt'
 test_output = 'output.txt'
 
@@ -21,10 +21,23 @@ keywords = ['integer', 'boolean', 'real', 'if', 'else', 'return', 'put', 'get', 
 
 #names each character
 def char_class(c):
-    if c.isdigit(): return 'digit'
-    if c.isalpha(): return 'letter'
-    if c == '.':    return 'dot'
+    if c.isdigit(): 
+        return 'digit'
+    if c.isalpha(): 
+        return 'letter'
+    if c == '.':    
+        return 'dot'
+    if c == '_': 
+        return 'underscore'
     return 'other'
+
+#helper to finish the word after an unknown character has been identified
+def word_end(text, i):
+    # this is going to parse through the rest of the word
+    j = i
+    while j < len(text) and (text[j].isalnum() or text[j] == '_'):
+        j += 1
+    return j
 
 #FSM :party:
 class FSM:
@@ -70,7 +83,7 @@ number_fsm = FSM(
 
 #create the identifier lexer object
 identifier_fsm = FSM(
-    transitions={('S','letter'):'ID', ('ID','letter'):'ID', ('ID','digit'):'ID'},
+    transitions={('S','letter'):'ID', ('ID','letter'):'ID', ('ID','digit'):'ID', ('ID', 'underscore'):'ID'},
     accepting={'ID':'identifier'},
 )
 
@@ -116,7 +129,17 @@ def lex(text, i):
     #for ints and reals
     if char.isdigit(): #if character is a digit
         token_type, end = number_fsm.run(text, i)
+        #check that a number isnt attempting to start an ID
+        if end < len(text) and (text[end].isalpha() or text[end] == '_'):
+            bad_end = word_end(text, end) #tracks when it ended
+            return 'unknown', text[i:bad_end], bad_end # calls OG call and returns token unknkown, move i, and where it ended
         return token_type, text[i:end], end #calls OG call and returns token of int or real and moves the i to where that ended
+
+    #for starting underscores which are unknown
+    if char == '_':
+        end = word_end(text, i)
+        return 'unknown', text[i:end], end #calls og call, returns token unknown, moves i, and where teh word ended
+
     #returns any unknown characters as an unknown token, but still continues
     return 'unknown', char, i+1 
 
