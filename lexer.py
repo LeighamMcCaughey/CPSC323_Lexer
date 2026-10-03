@@ -1,4 +1,5 @@
 # test file input & output storage variables
+# all commits from Lexie & rileya046 are related to the github user rileya046
 
 # test_input = 'easyInput.txt'
 test_input = 'mediumInput.txt'
