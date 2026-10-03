@@ -1,3 +1,7 @@
+# test file input & output storage variables
+test_input = 'easyTest.txt'
+test_output = 'output.txt'
+
 #arrays of all lexeme token names
 
 operators = ['=', '!=', '==', '<=', '>=', '<', '>', '+', '-', '*', '/']
@@ -115,10 +119,6 @@ def lex(text, i):
 
 
 # main testing location
-
-# test_input = 'input.txt'
-test_input = 'easyTest.txt'
-test_output = 'output.txt'
 
 with open(test_input, 'r') as file:
     input_text = file.read()
