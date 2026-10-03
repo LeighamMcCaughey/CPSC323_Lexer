@@ -115,7 +115,9 @@ def lex(text, i):
 
 
 # main testing location
-test_input = 'input.txt'
+
+# test_input = 'input.txt'
+test_input = 'easyTest.txt'
 test_output = 'output.txt'
 
 with open(test_input, 'r') as file:

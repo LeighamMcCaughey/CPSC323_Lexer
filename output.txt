@@ -1,12 +1,21 @@
 token          lexeme
 -------------------------
-keyword     	while
+identifier  	function
+identifier  	convert
 separator   	(
 identifier  	fahr
-operator    	<=
-identifier  	upper
+keyword     	integer
 separator   	)
-identifier  	a
-operator    	=
-real        	23.00
+separator   	{
+keyword     	return
+integer     	5
+operator    	*
+separator   	(
+identifier  	fahr
+operator    	-
+integer     	32
+separator   	)
+operator    	/
+integer     	9
 separator   	;
+separator   	}
