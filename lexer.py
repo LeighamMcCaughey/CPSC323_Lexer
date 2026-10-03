@@ -1,7 +1,7 @@
 # test file input & output storage variables
 
-test_input = 'easyInput.txt'
-# test_input = 'mediumInput.txt'
+# test_input = 'easyInput.txt'
+test_input = 'mediumInput.txt'
 # test_input = 'hardInput.txt'
 test_output = 'output.txt'
 
