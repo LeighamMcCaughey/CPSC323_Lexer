@@ -1,6 +1,6 @@
 token          lexeme
 -------------------------
-identifier  	Function
+keyword     	Function
 identifier  	convert
 separator   	(
 identifier  	fahr

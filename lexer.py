@@ -1,9 +1,9 @@
 # test file input & output storage variables
 
 # test_input = 'easyInput.txt'
-# test_input = 'mediumInput.txt'
-test_input = 'hardInput.txt'
-test_output = 'hardOutput.txt'
+test_input = 'mediumInput.txt'
+# test_input = 'hardInput.txt'
+test_output = 'output.txt'
 
 #arrays of all lexeme token names
 
@@ -109,7 +109,7 @@ def lex(text, i):
         #call the FSM !! :)
         token_type, end = identifier_fsm.run(text, i)
         word = text[i:end]
-        if word in keywords:
+        if word.lower() in keywords:
             return 'keyword', word, end #calls OG call and plugs in the words and moves the i to where the word ended
         return 'identifier', word, end #if the word in not a keyword return the ID that has gone through the FSM and make i where the ID ended
     
