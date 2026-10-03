@@ -15,12 +15,10 @@ keyword     	real
 identifier  	num
 operator    	=
 real        	1.0
-unknown     	_
-identifier  	number
+unknown     	_number
 operator    	=
 identifier  	num
-integer     	0
-identifier  	variable
+unknown     	0variable
 operator    	=
 identifier  	num
 keyword     	if

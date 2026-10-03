@@ -158,7 +158,7 @@ with open(test_output, 'w') as output:
         token_type, lexeme, i = lex(input_text, i)
         if token_type is None:
             break
-        output.write(f'{token_type:<12}\t{lexeme}\n')
+        output.write(f'{token_type:<15}\t{lexeme}\n')
 
 
                 
