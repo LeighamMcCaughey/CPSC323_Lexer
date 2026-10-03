@@ -1,8 +1,8 @@
 # test file input & output storage variables
 
 # test_input = 'easyInput.txt'
-test_input = 'easyInput.txt'
-test_output = 'easyOutput.txt'
+test_input = 'mediumInput.txt'
+test_output = 'mediumOutput.txt'
 
 #arrays of all lexeme token names
 
