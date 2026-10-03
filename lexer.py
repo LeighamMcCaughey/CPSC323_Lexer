@@ -114,12 +114,16 @@ def lex(text, i):
     return 'ERROR', char, i+1 
 
 
-with open('input.txt', 'r') as file:
+# main testing location
+test_input = 'input.txt'
+test_output = 'output.txt'
+
+with open(test_input, 'r') as file:
     input_text = file.read()
 
 #tokens = lex(input_text)
 i = 0
-with open('output.txt', 'w') as output:
+with open(test_output, 'w') as output:
     output.write('token\tlexeme\n')
     output.write('------------------------------')
     while True:
