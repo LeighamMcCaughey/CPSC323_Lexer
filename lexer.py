@@ -21,102 +21,7 @@ def char_class(c):
     if c == '.':    return 'dot'
     return 'other'
 
-def lex(text):
-    tokens = []
-    i = 0
-
-    while i < len(text):
-        #point to the current character
-        char = text[i]
-
-        #comment
-        if char == '!' and not (i + 1 < len(text) and text[i+1] == '='):
-            j = i + 2
-            while j < len(text) and text[j] != '!':
-                j += 1
-            i = j + 1 #skips the closing "!"
-            continue
-
-        #ignoring whitespaces
-        if char.isspace():
-            i += 1
-            continue
-
-        #for operators
-        twoChar = text[i:i+2]
-         #checks for operators like != and <=
-        if twoChar in operators:
-            tokens.append((twoChar, 'operator'))
-            i += 2
-            continue
-        if char in operators:
-            tokens.append((char, 'operator'))
-            i += 1
-            continue
-
-        #for seperatprs
-        if char in separators:
-            tokens.append((char, 'separator'))
-            i += 1
-            continue
-
-        #keywords
-        if char.isalpha():
-            j = i + 1
-            while j < len(text) and text[j] in letters:
-                j += 1
-
-            word = text[i:j]
-
-            if word in keywords:
-                tokens.append((word, 'keyword'))
-            # identifiers
-
-            # this checks if the second char is not in the 
-            # alphabet or numbers or an underscore then error
-            elif not word[1:].isalnum() or not word[1:] == '_':
-                tokens.clear()
-                tokens.append(('invalid ID', 'ERROR'))
-                return tokens
-            i = j
-            continue
-
-        #Ints and floats
-        if char.isdigit() or ((char == '+' and text[i+1].isdigit()) or (char == '-' and text[i+1].isdigit())):
-            j = i + 1
-
-            has_dot = False
-            while j < len(text) and (text[j].isdigit() or text[j] == '.'):
-                if text[j] == '.':
-                    has_dot = True
-                j += 1
-
-            if has_dot:
-                if text[j-1] == '.':
-                    tokens.clear() #maybe change so dont clear whole tokens list
-                    tokens.append(('number after dot was expected', 'ERROR'))
-                    return tokens
-                tokens.append((text[i:j], 'real'))
-            else: 
-                tokens.append((text[i:j], 'integer'))
-            i = j
-            continue 
-        tokens.append((char, 'ERROR'))
-        i += 1
-
-    return tokens
-
-with open('input.txt', 'r') as file:
-    input = file.read()
-
-tokens = lex(input)
-
-with open('output.txt', 'w') as file:
-    file.write('token\tlexeme\n')
-    for token, token_type in tokens:
-        file.write(f'{token_type}\t{token}\n')
-
-
+#FSM :party:
 class FSM:
     def __init__(self, transitions, accepting, start='S'):
         self.transitions = transitions  # dict: (state, char_class) -> next_state
@@ -149,7 +54,7 @@ class FSM:
                 last_end = j
         return last_accept, last_end #return the whole accepted token and the index where it ended
 
-#call the int and real lexer
+#create the int and real lexer object
 
 number_fsm = FSM(
     transitions={('S','digit'):'INT', ('INT','digit'):'INT',
@@ -158,31 +63,84 @@ number_fsm = FSM(
     accepting={'INT':'integer', 'REAL':'real'},
 )
 
-#call the identifier lexer
+#create the identifier lexer object
 identifier_fsm = FSM(
     transitions={('S','letter'):'ID', ('ID','letter'):'ID', ('ID','digit'):'ID'},
     accepting={'ID':'identifier'},
 )
 
-    #     for ch in input_str:
-    #         next_state = self.transitions.get((state, ch))
-    #         if next_state is None:
-    #             raise ValueError(f"No transition from {state} on {ch}")
-    #         state = next_state
-    #     return state
+#main lexer
+def lex(text):
+    tokens = []
+    i = 0
 
-    # states = {'start', 'digit', 'letter', 'end'}
-    # transitions = {
-    #     ('start', 'a'):'letter',
-    #     ('start', '1'):'digit',
-    #     ('start', 'a'):'letter', #letter not character
-    #     ('start', '1'):'digit', # twice
-    #     ('start', ''):'end',
-    #     ('start', ''):'end', #not meaningful
-    # }
+    while i < len(text):
+        #point to the current character
+        char = text[i]
 
-    # fsm=FSM('start', states, transitions)
-    # print(fsm.run(input)) # 'end'
+        #comment
+        if char == '!' and not (i + 1 < len(text) and text[i+1] == '='):
+            j = i + 1
+            while j < len(text) and text[j] != '!':
+                j += 1
+            i = j + 1 #skips the closing "!"
+            continue
+
+        #ignoring whitespaces
+        if char.isspace():
+            i += 1
+            continue
+
+        #for operators
+        twoChar = text[i:i+2]
+         #checks for operators like != and <=
+        if twoChar in operators:
+            tokens.append((twoChar, 'operator'))
+            i += 2
+            continue
+        if char in operators:
+            tokens.append((char, 'operator'))
+            i += 1
+            continue
+
+        #for seperatprs
+        if char in separators:
+            tokens.append((char, 'separator'))
+            i += 1
+            continue
+
+        # for ID and keywords
+        if char.isalpha(): # if character is in the alphabet
+            #call the FSM !! :)
+            token_type, end = identifier_fsm.run(text, i)
+            word = text[i:end]
+            if word in keywords:
+                tokens.append((word, 'keyword'))
+            else:
+                tokens.append((word, 'identifier'))
+            i = end
+            continue
+        #for ints and reals
+        if char.isdigit(): #if character is a digit
+            token_type, end = number_fsm.run(text, i)
+            tokens.append((text[i:end], token_type))
+            i = end
+            continue
+
+    return tokens
+
+with open('input.txt', 'r') as file:
+    input_text = file.read()
+
+#tokens = lex(input_text)
+i = 0
+with open('output.txt', 'w') as output:
+    file.write('token\tlexeme\n')
+    while True:
+        token_type, lexeme, i = lex(input_text, i)
+        if token_type is None:
+            break
+        output.write(f'{token_type}\t{lexeme}\n')
 
 
                 
