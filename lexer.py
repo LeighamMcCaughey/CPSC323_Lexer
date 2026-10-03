@@ -82,38 +82,38 @@ def lex(text, i):
         else:
             break
 
-        #if theres nothing else but whitespace / comments then return
-        if i >= len(text):
-            return None, None, i #this tells us were at the end
+    #if theres nothing else but whitespace / comments then return
+    if i >= len(text):
+        return None, None, i #this tells us were at the end
 
-        char = text[i] #checks one character
-        twoChar = text[i:i+2] #checks for 2 characters together like in >= or whatever
-        
-        #for operators
-        if twoChar in operators:
-            return 'operator', twoChar, i + len(twoChar) #plugs back into the OG call and starts the lexer over at the new i
-        if char in operators:
-            return 'operator', char, i + 1 #returns to OG call, moves i one character
+    char = text[i] #checks one character
+    twoChar = text[i:i+2] #checks for 2 characters together like in >= or whatever
+    
+    #for operators
+    if twoChar in operators:
+        return 'operator', twoChar, i + len(twoChar) #plugs back into the OG call and starts the lexer over at the new i
+    if char in operators:
+        return 'operator', char, i + 1 #returns to OG call, moves i one character
 
-        #for seperatprs
-        if char in separators:
-            return 'separator', char, i + 1 #returns to the OG call, and moves one space over
+    #for seperatprs
+    if char in separators:
+        return 'separator', char, i + 1 #returns to the OG call, and moves one space over
 
-        # for ID and keywords
-        if char.isalpha(): # if character is in the alphabet
-            #call the FSM !! :)
-            token_type, end = identifier_fsm.run(text, i)
-            word = text[i:end]
-            if word in keywords:
-                return 'keyword', word, end #calls OG call and plugs in the words and moves the i to where the word ended
-            return 'identifier', word, end #if the word in not a keyword return the ID that has gone through the FSM and make i where the ID ended
-        
-        #for ints and reals
-        if char.isdigit(): #if character is a digit
-            token_type, end = number_fsm.run(text, i)
-            return token_type, text[i:end], end #calls OG call and returns token of int or real and moves the i to where that ended
-        #returns any unknown characters as an error, but still continues
-        return 'ERROR', char, i+1 
+    # for ID and keywords
+    if char.isalpha(): # if character is in the alphabet
+        #call the FSM !! :)
+        token_type, end = identifier_fsm.run(text, i)
+        word = text[i:end]
+        if word in keywords:
+            return 'keyword', word, end #calls OG call and plugs in the words and moves the i to where the word ended
+        return 'identifier', word, end #if the word in not a keyword return the ID that has gone through the FSM and make i where the ID ended
+    
+    #for ints and reals
+    if char.isdigit(): #if character is a digit
+        token_type, end = number_fsm.run(text, i)
+        return token_type, text[i:end], end #calls OG call and returns token of int or real and moves the i to where that ended
+    #returns any unknown characters as an error, but still continues
+    return 'ERROR', char, i+1 
 
 
 with open('input.txt', 'r') as file:
