@@ -1,8 +1,9 @@
 # test file input & output storage variables
 
 # test_input = 'easyInput.txt'
-test_input = 'mediumInput.txt'
-test_output = 'mediumOutput.txt'
+# test_input = 'mediumInput.txt'
+test_input = 'hardInput.txt'
+test_output = 'hardOutput.txt'
 
 #arrays of all lexeme token names
 
@@ -116,8 +117,8 @@ def lex(text, i):
     if char.isdigit(): #if character is a digit
         token_type, end = number_fsm.run(text, i)
         return token_type, text[i:end], end #calls OG call and returns token of int or real and moves the i to where that ended
-    #returns any unknown characters as an error, but still continues
-    return 'ERROR', char, i+1 
+    #returns any unknown characters as an unknown token, but still continues
+    return 'unknown', char, i+1 
 
 
 # main testing location
