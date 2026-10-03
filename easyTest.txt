@@ -1,4 +1,4 @@
-! test 1!
+! test 1 - sourced from Compiler Project sample code!
 function convert(fahr integer)
 {
     return 5 * (fahr -32)/9;

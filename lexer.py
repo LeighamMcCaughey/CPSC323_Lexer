@@ -1,5 +1,7 @@
 # test file input & output storage variables
+
 test_input = 'easyTest.txt'
+# test_input = 'mediumTest.txt'
 test_output = 'output.txt'
 
 #arrays of all lexeme token names
@@ -14,7 +16,7 @@ digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 letters = [chr(i) for i in range(ord('a'), ord('z') + 1)] + [chr(i) for i in range(ord('A'), ord('Z') + 1)] 
 
 # list of keywords
-keywords = ['integer', 'boolean', 'real', 'if', 'else', 'return', 'put', 'get', 'while', 'true', 'false', 'fi']
+keywords = ['integer', 'boolean', 'real', 'if', 'else', 'return', 'put', 'get', 'while', 'true', 'false', 'fi', 'function']
 
 #names each character
 def char_class(c):
