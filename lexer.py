@@ -70,44 +70,34 @@ identifier_fsm = FSM(
 )
 
 #main lexer
-def lex(text):
-    tokens = []
-    i = 0
-
+def lex(text, i):
     while i < len(text):
-        #point to the current character
-        char = text[i]
-
-        #comment
-        if char == '!' and not (i + 1 < len(text) and text[i+1] == '='):
-            j = i + 1
-            while j < len(text) and text[j] != '!':
-                j += 1
-            i = j + 1 #skips the closing "!"
-            continue
-
         #ignoring whitespaces
-        if char.isspace():
+        if text[i].isspace():
             i += 1
-            continue
+        # ignoring comments
+        elif text[i] == '!' and text[i+1:i+2] != '=':
+            end = text.find('!', i+1)
+            i = len(text) if end == -1 else end + 1
+        else:
+            break
 
+        #if theres nothing else but whitespace / comments then return
+        if i >= len(text):
+            return None, None, i #this tells us were at the end
+
+        char = text[i] #checks one character
+        twoChar = text[i:i+2] #checks for 2 characters together like in >= or whatever
+        
         #for operators
-        twoChar = text[i:i+2]
-         #checks for operators like != and <=
         if twoChar in operators:
-            tokens.append((twoChar, 'operator'))
-            i += 2
-            continue
+            return 'operator', twoChar, i + len(twoChar) #plugs back into the OG call and starts the lexer over at the new i
         if char in operators:
-            tokens.append((char, 'operator'))
-            i += 1
-            continue
+            return 'operator', char, i + 1 #returns to OG call, moves i one character
 
         #for seperatprs
         if char in separators:
-            tokens.append((char, 'separator'))
-            i += 1
-            continue
+            return 'separator', char, i + 1 #returns to the OG call, and moves one space over
 
         # for ID and keywords
         if char.isalpha(): # if character is in the alphabet
@@ -115,19 +105,16 @@ def lex(text):
             token_type, end = identifier_fsm.run(text, i)
             word = text[i:end]
             if word in keywords:
-                tokens.append((word, 'keyword'))
-            else:
-                tokens.append((word, 'identifier'))
-            i = end
-            continue
+                return 'keyword', word, end #calls OG call and plugs in the words and moves the i to where the word ended
+            return 'identifier', word, end #if the word in not a keyword return the ID that has gone through the FSM and make i where the ID ended
+        
         #for ints and reals
         if char.isdigit(): #if character is a digit
             token_type, end = number_fsm.run(text, i)
-            tokens.append((text[i:end], token_type))
-            i = end
-            continue
+            return token_type, text[i:end], end #calls OG call and returns token of int or real and moves the i to where that ended
+        #returns any unknown characters as an error, but still continues
+        return 'ERROR', char, i+1 
 
-    return tokens
 
 with open('input.txt', 'r') as file:
     input_text = file.read()
@@ -135,7 +122,7 @@ with open('input.txt', 'r') as file:
 #tokens = lex(input_text)
 i = 0
 with open('output.txt', 'w') as output:
-    file.write('token\tlexeme\n')
+    output.write('token\tlexeme\n')
     while True:
         token_type, lexeme, i = lex(input_text, i)
         if token_type is None:
